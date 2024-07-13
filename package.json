@@ -1,0 +1,16 @@
+{
+  "name": "gemini-chatbot",
+  "version": "1.0.0",
+  "description": "Chatbot powered by Gemini",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Chiara Valenzuela",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.14.1",
+    "dotenv": "^16.4.5"
+  }
+}
