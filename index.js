@@ -1,35 +1,44 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { config as dotenvConfig } from 'dotenv';
+import genAI from './config/gemini.js';
+import readlineSync from 'readline-sync';
+import colors from 'colors';
 
-dotenvConfig();
+let chatHistory = [];
 
-const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+async function main() {
+  console.log(colors.bold.cyan('¡Bienvenida al programa de Chatbot!'));
+  console.log(colors.bold.cyan('Puedes comenzar a chatear con el bot.'));
 
-async function run() {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
-  
-    const chat = model.startChat({
-      history: [
-        {
-          role: "user",
-          parts: [{ text: "Hello, I have 2 dogs in my house." }],
+  while (true) {
+    const userInput = readlineSync.question(colors.magenta('You: '));
+
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const chat = model.startChat({
+        history: chatHistory,
+        generationConfig: {
+          maxOutputTokens: 100,
         },
-        {
-          role: "model",
-          parts: [{ text: "Great to meet you. What would you like to know?" }],
-        },
-      ],
-      generationConfig: {
-        maxOutputTokens: 100,
-      },
-    });
-  
-    const msg = "How many paws are in my house?";
-  
-    const result = await chat.sendMessage(msg);
-    const response = await result.response;
-    const text = response.text();
-    console.log(text);
+      });
+
+      const result = await chat.sendMessage(userInput);
+      const response = await result.response;
+      const text = response.text();
+
+      chatHistory.push({ role: 'user', parts: [{ text: userInput }] });
+      chatHistory.push({ role: 'model', parts: [{ text: text }] });
+
+      if (userInput.toLowerCase() === 'exit') {
+        console.log(colors.cyan('Bot: ') + text);
+        chatHistory = [];
+        return;
+      }
+
+      console.log(colors.cyan('Bot: ') + text);
+    } catch (error) { 
+      console.error(colors.red(error));
+    }
+  }
 }
 
-run();
+main();
