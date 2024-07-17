@@ -5,8 +5,6 @@ import colors from 'colors';
 let chatHistory = [];
 
 async function main() {
-  console.log(colors.bold.cyan('¡Bienvenida al programa de Chatbot!'));
-  console.log(colors.bold.cyan('Puedes comenzar a chatear con el bot.'));
 
   while (true) {
     const userInput = readlineSync.question(colors.magenta('You: '));
