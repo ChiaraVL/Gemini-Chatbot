@@ -1,21 +1,18 @@
 import path from 'path';
-import webpack from 'webpack';
-import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import Dotenv from 'dotenv-webpack';
 
-// Load environment variables from .env file
-const env = dotenv.config().parsed;
-
-// Create an object for Webpack's DefinePlugin
-const envKeys = Object.keys(env).reduce((prev, next) => {
-  prev[`process.env.${next}`] = JSON.stringify(env[next]);
-  return prev;
-}, {});
+// Define __filename and __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
+  mode: 'development', // Set the mode to 'development' or 'production'
   entry: './frontend/js/script.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve('dist'),
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/', // Add publicPath for dev server
   },
   module: {
     rules: [
@@ -32,14 +29,21 @@ export default {
     ],
   },
   plugins: [
-    new webpack.DefinePlugin(envKeys),
+    new Dotenv(), // Add this plugin
   ],
   resolve: {
     fallback: {
       "fs": false,
       "path": false,
       "os": false,
-      "util": require.resolve("util/") // Add fallback for util
-    }
-  }
+      "util": path.resolve('node_modules/util/'), // Use path.resolve to include util
+    },
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    compress: true,
+    port: 9000, // You can change the port if needed
+  },
 };
