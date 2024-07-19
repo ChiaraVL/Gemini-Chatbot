@@ -1,4 +1,5 @@
 import { generateResponse, chatHistory } from '../../backend/index.js';
+import '../css/style.css';
 
 const chatInput = document.querySelector('.chat-input textarea');
 const sendChatBtn = document.querySelector('.chat-input span');
